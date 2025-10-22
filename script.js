@@ -705,7 +705,7 @@ function changeDifficulty(difficulty) {
         easy: { balloonCount: 6, heavyCount: 1 },
         medium: { balloonCount: 10, heavyCount: 1 },
         hard: { balloonCount: 12, heavyCount: 1 },
-        expert: { balloonCount: 16, heavyCount: 2 }
+        expert: { balloonCount: 14, heavyCount: 2 }
     };
     
     const settings = difficultySettings[difficulty] || difficultySettings.easy;
@@ -1817,3 +1817,4 @@ document.addEventListener('keydown', function(e) {
     }
 
 });
+
