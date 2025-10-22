@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>🎈 Balance Game 2 - Next Level Challenge</title>
+    <meta name="description" content="Test your logic skills with the enhanced balloon balance puzzle game! Can you find the heavy balloon in the fewest moves?">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <!-- Add Google Fonts for better typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Add GSAP animation library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Add Three.js for 3D effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Add Particle effects library -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+</head>
+
+<body>
+    <!-- Background particle system -->
+    <div id="tsparticles"></div>
+    
+    <!-- Game Stats Panel -->
+    <div id="stats-panel">
+        <div class="stat-item">
+            <span class="stat-icon">⏱️</span>
+            <span class="stat-label">Time</span>
+            <span id="timer">00:00</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-icon">🎯</span>
+            <span class="stat-label">Moves</span>
+            <span id="move-counter">0</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-icon">🏆</span>
+            <span class="stat-label">Best</span>
+            <span id="best-score">--</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-icon">🔥</span>
+            <span class="stat-label">Streak</span>
+            <span id="streak">0</span>
+        </div>
+    </div>
+
+    <h1 style="font-size:3.2rem; color:#2c3e50; letter-spacing:2px; text-shadow:0 2px 4px rgba(0,0,0,0.2); font-weight:700; margin-top:32px; background: linear-gradient(45deg, #e74c3c, #f39c12); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🎈 BALANCE GAME 2 🎈</h1>
+    <p style="font-size:1.2rem; color:#2c3e50; font-weight:600; margin-bottom:28px; text-shadow:0 1px 2px rgba(0,0,0,0.1); letter-spacing:0.5px; opacity:0.9;">Enhanced edition with new features! Drag the balloons onto the scale and discover the secret heavy one!</p>
+
+    <!-- Difficulty Selection -->
+    <div id="difficulty-panel">
+        <h3>🎮 Choose Your Challenge</h3>
+        <button class="difficulty-btn active" data-difficulty="easy">
+            <span class="diff-emoji">🟢</span>
+            <span class="diff-name">Easy</span>
+            <span class="diff-desc">6 Balloons</span>
+        </button>
+        <button class="difficulty-btn" data-difficulty="medium">
+            <span class="diff-emoji">🟡</span>
+            <span class="diff-name">Medium</span>
+            <span class="diff-desc">10 Balloons</span>
+        </button>
+        <button class="difficulty-btn" data-difficulty="hard">
+            <span class="diff-emoji">🔴</span>
+            <span class="diff-name">Hard</span>
+            <span class="diff-desc">12 Balloons</span>
+        </button>
+        <button class="difficulty-btn" data-difficulty="expert">
+            <span class="diff-emoji">💀</span>
+            <span class="diff-name">Expert</span>
+            <span class="diff-desc">15 Balloons + 2 Heavy!</span>
+        </button>
+    </div>
+
+    <!-- Scale area with left/right drop zones and center line -->
+    <div id="scale-area">
+        <div id="scale-container">
+            <div id="left-drop" class="drop-zone">
+                <span class="drop-hint">Drop balloons here</span>
+            </div>
+            <div id="center-line"></div>
+            <div id="right-drop" class="drop-zone">
+                <span class="drop-hint">Drop balloons here</span>
+            </div>
+        </div>
+        <div id="scale" class="scale"></div>
+    </div>
+
+    <!-- Balloons container -->
+    <div id="balls-container" class="balls"></div>
+
+    <!-- Game Instructions -->
+    <div class="game-instructions">
+        <p>🎈 <strong>Drag balloons</strong> to scale sides to weigh them</p>
+        <p>🎯 <strong>Click a balloon</strong> to select it for guessing</p>
+    </div>
+
+    <!-- Enhanced Game controls -->
+    <div class="controls">
+        <button id="hintBtn" class="control-btn hint-btn">💡 Hint</button>
+        <button id="weighBtn" class="control-btn weigh-btn">⚖️ Weigh</button>
+        <button id="guessBtn" class="control-btn guess-btn">🎯 Guess</button>
+        <button id="undoBtn" class="control-btn undo-btn">↩️ Undo</button>
+        <button id="resetBtn" class="control-btn reset-btn">🔄 Reset</button>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settings-panel">
+        <button id="settings-toggle">⚙️</button>
+        <div id="settings-menu" class="hidden">
+            <h3>⚙️ Settings</h3>
+            <div class="setting-item">
+                <label>🔊 Sound Effects</label>
+                <input type="checkbox" id="sound-toggle" checked>
+            </div>
+            <div class="setting-item">
+                <label>🎵 Background Music</label>
+                <input type="checkbox" id="music-toggle">
+            </div>
+            <div class="setting-item">
+                <label>✨ Particle Effects</label>
+                <input type="checkbox" id="particles-toggle" checked>
+            </div>
+            <div class="setting-item">
+                <label>🌈 Theme Effects</label>
+                <input type="checkbox" id="theme-effects-toggle" checked>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message area with enhanced styling -->
+    <div id="message"></div>
+
+    <!-- Enhanced Code-Style Results Terminal -->
+    <div id="results-log" class="code-terminal">
+        <div class="terminal-header">
+            <div class="terminal-controls">
+                <span class="control-dot red"></span>
+                <span class="control-dot yellow"></span>
+                <span class="control-dot green"></span>
+            </div>
+            <div class="terminal-title">⚖️ ANALYSIS_TERMINAL_V2.exe</div>
+            <div class="terminal-stats">
+                <span class="terminal-time" id="terminal-time">00:00</span>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div class="terminal-prompt">
+                <span class="prompt-symbol">$</span>
+                <span class="prompt-text">weighing_analyzer --mode=enhanced --session=v2</span>
+            </div>
+            <div id="progress-bar" class="code-progress">
+                <div class="progress-label">
+                    <span class="keyword">PROGRESS:</span> 
+                    <span class="variable" id="progress-text">0/3 optimal moves</span>
+                </div>
+                <div class="progress-container">
+                    <div id="progress-fill" class="progress-bar-fill"></div>
+                </div>
+            </div>
+            <div class="output-section">
+                <div class="output-header">
+                    <span class="comment">// Weighing analysis results - Enhanced Edition</span>
+                </div>
+                <div id="log-list" class="code-output"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievement System -->
+    <div id="achievements-panel" class="hidden">
+        <h3>🏆 Achievements</h3>
+        <div id="achievements-list"></div>
+    </div>
+
+    <!-- Victory Modal -->
+    <div id="victory-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>🎉 Congratulations! 🎉</h2>
+            <div id="victory-stats"></div>
+            <div class="modal-buttons">
+                <button id="share-btn" class="modal-btn">📱 Share Score</button>
+                <button id="next-level-btn" class="modal-btn">➡️ Next Level</button>
+                <button id="play-again-btn" class="modal-btn">🔄 Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="loading-balloon">🎈</div>
+            <h2>Loading Balance Game 2...</h2>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
