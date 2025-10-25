@@ -1,1348 +1,205 @@
-body {
-  font-family: 'Nunito', 'Segoe UI', Arial, sans-serif;
-  text-align: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  background-size: 200% 200%;
-  animation: simpleBackground 8s ease infinite;
-  color: #222;
-  margin: 0;
-  min-height: 100vh;
-  overflow-x: hidden;
-  position: relative;
-}
-
-/* Simplified background animation for better performance */
-@keyframes simpleBackground {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Particle background */
-#tsparticles {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -2;
-}
-
-/* Stats Panel */
-#stats-panel {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  z-index: 100;
-  background: rgba(255,255,255,0.95);
-  padding: 15px;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255,255,255,0.3);
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.stat-icon {
-  font-size: 1.2rem;
-}
-
-.stat-label {
-  min-width: 45px;
-  text-align: left;
-  color: #555;
-}
-
-#timer, #move-counter, #best-score, #streak {
-  font-weight: 800;
-  color: #2c3e50;
-  min-width: 35px;
-}
-
-/* Difficulty Panel */
-#difficulty-panel {
-  margin: 20px auto;
-  max-width: 800px;
-  background: rgba(255,255,255,0.9);
-  padding: 20px;
-  border-radius: 20px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-}
-
-#difficulty-panel h3 {
-  margin-top: 0;
-  color: #2c3e50;
-  font-family: 'Fredoka One', cursive;
-}
-
-.difficulty-btn {
-  margin: 5px;
-  padding: 15px 20px;
-  border: none;
-  border-radius: 15px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  background: linear-gradient(45deg, #f8f9fa, #e9ecef);
-  border: 2px solid transparent;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  min-width: 120px;
-}
-
-.difficulty-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-
-.difficulty-btn.active {
-  background: linear-gradient(45deg, #4ecdc4, #44a08d);
-  color: white;
-  border-color: #44a08d;
-  box-shadow: 0 6px 20px rgba(68,160,141,0.3);
-}
-
-.diff-emoji {
-  font-size: 1.5rem;
-}
-
-.diff-name {
-  font-weight: 800;
-  font-size: 1rem;
-}
-
-.diff-desc {
-  font-size: 0.8rem;
-  opacity: 0.8;
-}
-
-/* Theme Panel */
-#theme-panel {
-  margin: 20px auto;
-  max-width: 600px;
-  background: rgba(255,255,255,0.9);
-  padding: 15px;
-  border-radius: 20px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-}
-
-#theme-panel h3 {
-  margin-top: 0;
-  color: #2c3e50;
-  font-family: 'Fredoka One', cursive;
-}
-
-.theme-btn {
-  margin: 5px;
-  padding: 12px 18px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  background: linear-gradient(45deg, #f8f9fa, #e9ecef);
-  border: 2px solid transparent;
-}
-
-.theme-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-}
-
-.theme-btn.active {
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  color: white;
-  box-shadow: 0 6px 20px rgba(102,126,234,0.3);
-}
-
-/* Game Instructions */
-.game-instructions {
-  text-align: center;
-  margin: 20px auto;
-  padding: 15px 25px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  max-width: 500px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.game-instructions p {
-  margin: 8px 0;
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.game-instructions strong {
-  color: #ffd700;
-  font-weight: 700;
-}
-
-/* Enhanced Controls */
-.controls {
-  margin: 30px 0;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-.control-btn {
-  padding: 15px 25px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  border-radius: 15px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  position: relative;
-  overflow: hidden;
-}
-
-.weigh-btn {
-  background: linear-gradient(45deg, #4facfe, #00f2fe);
-  color: white;
-}
-
-.guess-btn {
-  background: linear-gradient(45deg, #43e97b, #38f9d7);
-  color: white;
-}
-
-.reset-btn {
-  background: linear-gradient(45deg, #fa709a, #fee140);
-  color: white;
-}
-
-.hint-btn {
-  background: linear-gradient(45deg, #a8edea, #fed6e3);
-  color: #2c3e50;
-}
-
-.undo-btn {
-  background: linear-gradient(45deg, #ffecd2, #fcb69f);
-  color: #2c3e50;
-}
-
-.control-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-}
-
-.control-btn:active {
-  transform: translateY(-1px);
-}
-
-/* Settings Panel */
-#settings-panel {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 100;
-}
-
-#settings-toggle {
-  background: rgba(255,255,255,0.9);
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
-}
-
-#settings-toggle:hover {
-  transform: rotate(90deg);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-}
-
-#settings-menu {
-  position: absolute;
-  top: 60px;
-  left: 0;
-  background: rgba(255,255,255,0.95);
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  backdrop-filter: blur(10px);
-  min-width: 200px;
-}
-
-#settings-menu h3 {
-  margin-top: 0;
-  color: #2c3e50;
-  font-size: 1.1rem;
-}
-
-.setting-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-/* Progress Bar */
-#progress-bar {
-  background: rgba(255,255,255,0.3);
-  border-radius: 10px;
-  height: 20px;
-  margin: 15px 0;
-  overflow: hidden;
-  position: relative;
-}
-
-#progress-fill {
-  background: linear-gradient(45deg, #4facfe, #00f2fe);
-  height: 100%;
-  width: 0%;
-  transition: width 0.5s ease;
-}
-
-#progress-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #2c3e50;
-  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
-}
-
-/* Victory Modal */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(5px);
-}
-
-.modal-content {
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  padding: 40px;
-  border-radius: 25px;
-  text-align: center;
-  color: white;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-  max-width: 90%;
-  animation: modalPop 0.5s ease-out;
-}
-
-@keyframes modalPop {
-  0% { transform: scale(0.5); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.modal-buttons {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-  margin-top: 25px;
-  flex-wrap: wrap;
-}
-
-.modal-btn {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.2);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.3);
-}
-
-.modal-btn:hover {
-  background: rgba(255,255,255,0.3);
-  transform: translateY(-2px);
-}
-
-/* Loading Screen */
-#loading-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-  color: white;
-}
-
-.loading-content {
-  text-align: center;
-}
-
-.loading-content h2 {
-  color: white;
-  font-size: 2rem;
-  font-weight: normal;
-  margin-bottom: 20px;
-}
-
-.loading-balloon {
-  font-size: 4rem;
-  animation: loadingFloat 2s ease-in-out infinite;
-  margin-bottom: 20px;
-}
-
-@keyframes loadingFloat {
-  0%, 100% { transform: translateY(0) rotate(-5deg); }
-  50% { transform: translateY(-20px) rotate(5deg); }
-}
-
-.loading-bar {
-  width: 200px;
-  height: 8px;
-  background: rgba(255,255,255,0.3);
-  border-radius: 4px;
-  overflow: hidden;
-  margin: 20px auto;
-}
-
-.loading-progress {
-  height: 100%;
-  background: linear-gradient(45deg, #4facfe, #00f2fe);
-  width: 0%;
-  animation: loadingProgress 3s ease-in-out;
-}
-
-@keyframes loadingProgress {
-  0% { width: 0%; }
-  100% { width: 100%; }
-}
-
-/* Drop zone hints - Hidden to focus on scale */
-.drop-hint {
-  display: none; /* Hide drop hints completely */
-  pointer-events: none;
-}
-
-.drop-zone:empty .drop-hint {
-  display: none; /* Keep hidden */
-}
-
-.drop-zone:not(:empty) .drop-hint {
-  display: none; /* Keep hidden */
-}
-
-/* Hidden class */
-.hidden {
-  display: none !important;
-}
-
-/* Dynamic background animation */
-@keyframes dynamicBackground {
-  0% { background-position: 0% 50%; }
-  25% { background-position: 100% 50%; }
-  50% { background-position: 100% 100%; }
-  75% { background-position: 0% 100%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Floating clouds */
-body::before {
-  content: '☁️ ☁️ ☁️ ☁️ ☁️';
-  position: fixed;
-  top: 10%;
-  left: -100px;
-  font-size: 30px;
-  animation: floatClouds 30s linear infinite;
-  z-index: -1;
-  opacity: 0.6;
-}
-
-body::after {
-  content: '☁️ ☁️ ☁️';
-  position: fixed;
-  top: 25%;
-  left: -80px;
-  font-size: 25px;
-  animation: floatClouds 35s linear infinite;
-  animation-delay: -15s;
-  z-index: -1;
-  opacity: 0.4;
-}
-
-@keyframes floatClouds {
-  from { transform: translateX(0); }
-  to { transform: translateX(calc(100vw + 200px)); }
-}
-
-h1 {
-  font-family: 'Impact', 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
-  font-size: 2.5rem;
-  font-weight: 900;
-  letter-spacing: 2px;
-  color: white;
-  text-shadow: 
-    0 4px 8px rgba(0,0,0,0.5),
-    0 0 20px rgba(255,255,255,0.3);
-  margin-top: 20px;
-  margin-bottom: 20px;
-  text-align: center;
-  display: block;
-  width: 100%;
-}
-
-/* Simplified title styling to match loading screen */
-
-p {
-  font-size: 1.3rem;
-  margin-bottom: 24px;
-  margin-top: 5px;
-  color: #2c3e50;
-  font-weight: 600;
-  text-shadow: 0 2px 4px rgba(255,255,255,0.8);
-  background: linear-gradient(45deg, rgba(255,255,255,0.9), rgba(240,248,255,0.7));
-  padding: 12px 24px;
-  border-radius: 25px;
-  display: block;
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  border: 2px solid rgba(255,255,255,0.3);
-  position: relative;
-  animation: subtitleFloat 4s ease-in-out infinite;
-}
-
-@keyframes subtitleFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
-}
-
-/* Add small balloon decorations to subtitle */
-p::before {
-  content: '🎈';
-  position: absolute;
-  left: -25px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.2rem;
-  opacity: 0.7;
-  animation: subtitleBalloon 5s ease-in-out infinite;
-}
-
-p::after {
-  content: '🎈';
-  position: absolute;
-  right: -25px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.2rem;
-  opacity: 0.7;
-  animation: subtitleBalloon 5s ease-in-out infinite;
-  animation-delay: 2.5s;
-}
-
-@keyframes subtitleBalloon {
-  0%, 100% { transform: translateY(-50%) rotate(0deg); opacity: 0.7; }
-  50% { transform: translateY(-65%) rotate(10deg); opacity: 1; }
-}
-
-#scale-area {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 40px 0;
-}
-
-#scale-container {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  justify-content: center;
-  width: 600px;
-  margin-bottom: -20px;
-  position: relative;
-  z-index: 2;
-}
-
-.drop-zone {
-  width: 240px;
-  height: 120px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  border: none; /* Remove white background dashed border */
-  background: transparent; /* Remove white background */
-  border-radius: 20px;
-  margin: 0 16px;
-  min-height: 120px;
-  gap: 8px;
-  box-shadow: none; /* Remove drop zone shadows */
-  position: relative;
-  z-index: 2;
-  transition: all 0.3s ease;
-}
-
-.drop-zone:hover {
-  border: 2px dashed rgba(52, 152, 219, 0.4); /* Subtle border hint on hover */
-  background: transparent; /* Keep transparent */
-  transform: none; /* Remove movement */
-}
-
-/* Drop zone drag effects */
-.drop-zone.drop-hover {
-  border: 2px dashed rgba(52, 152, 219, 0.8) !important;
-  background: rgba(52, 152, 219, 0.05) !important;
-  transform: scale(1.01);
-}
-
-#center-line {
-  width: 12px;
-  height: 90px;
-  background: linear-gradient(45deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
-  margin: 0 8px;
-  border-radius: 6px;
-  box-shadow: 
-    0 4px 12px rgba(0,0,0,0.3),
-    inset 0 2px 4px rgba(255,255,255,0.1);
-  border: 1px solid #1a252f;
-  position: relative;
-}
-
-/* Add a pivot point at the top of the center line */
-#center-line::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 16px;
-  background: radial-gradient(circle, #34495e 0%, #2c3e50 100%);
-  border-radius: 10px 10px 4px 4px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-  border: 1px solid #1a252f;
-}
-
-.scale {
-  width: 500px;
-  height: 24px; /* Make slightly thicker */
-  background: linear-gradient(45deg, #2c3e50 0%, #34495e 25%, #4a6741 50%, #34495e 75%, #2c3e50 100%);
-  border-radius: 12px;
-  margin: 0 auto;
-  box-shadow: 
-    0 8px 24px rgba(0,0,0,0.4), /* Enhanced shadow for prominence */
-    inset 0 2px 4px rgba(255,255,255,0.2),
-    inset 0 -2px 4px rgba(0,0,0,0.3),
-    0 0 15px rgba(52,152,219,0.4); /* Stronger glow */
-  transition: all 0.8s cubic-bezier(.68,-0.55,.27,1.55);
-  position: relative;
-  z-index: 3; /* Higher z-index to be above drop zones */
-  border: 2px solid #1a252f;
-  overflow: hidden;
-}
-
-/* Enhanced scale when dragover */
-.scale.drag-over {
-  height: 28px; /* Grow when dragging over */
-  box-shadow: 
-    0 12px 32px rgba(52, 152, 219, 0.6),
-    inset 0 2px 4px rgba(255,255,255,0.3),
-    inset 0 -2px 4px rgba(0,0,0,0.4),
-    0 0 25px rgba(52,152,219,0.7);
-  transform: scale(1.05);
-}
-
-/* Scale shine effect */
-.scale::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  animation: scaleShine 3s ease-in-out infinite;
-}
-
-@keyframes scaleShine {
-  0% { left: -100%; }
-  50% { left: 100%; }
-  100% { left: 100%; }
-}
-
-/* Scale wobble when tipping */
-.scale.wobble {
-  animation: scaleWobble 0.6s ease-in-out;
-}
-
-@keyframes scaleWobble {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(1deg) scale(1.02); }
-  75% { transform: rotate(-1deg) scale(1.02); }
-}
-
-.balls {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  margin: 32px 0;
-}
-
-
-.ball {
-  width: 80px;
-  height: 100px;
-  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 50%, #ffb3b3 100%);
-  border-radius: 50px 50px 50px 50px / 60px 60px 40px 40px;
-  border: 2px solid rgba(255,255,255,0.3);
-  box-shadow: 
-    0 8px 25px rgba(0,0,0,0.15),
-    inset -10px -10px 0 rgba(0,0,0,0.1),
-    inset 15px 15px 0 rgba(255,255,255,0.2),
-    0 0 20px rgba(255,107,107,0.3);
-  cursor: grab;
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 1.8rem;
-  color: #fff;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-  user-select: none;
-  position: relative;
-  transform-style: preserve-3d;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
-}
-
-/* Sparkle effect around balloons */
-.ball::after {
-  content: '✨';
-  position: absolute;
-  top: -15px;
-  right: -15px;
-  font-size: 20px;
-  animation: sparkle 2s ease-in-out infinite;
-  opacity: 0;
-}
-
-@keyframes sparkle {
-  0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1) rotate(180deg); }
-}
-
-/* Balloon hover effect - JUICY! */
-.ball:hover {
-  transform: translateY(-10px) scale(1.15) rotate(2deg);
-  box-shadow: 
-    0 15px 40px rgba(0,0,0,0.3),
-    inset -10px -10px 0 rgba(0,0,0,0.1),
-    inset 15px 15px 0 rgba(255,255,255,0.4),
-    0 0 30px rgba(255,107,107,0.6);
-  cursor: grabbing;
-  animation: balloonWobble 0.6s ease-in-out infinite alternate;
-}
-
-.ball:hover::after {
-  opacity: 1 !important;
-  animation: sparkleIntense 0.5s ease-in-out infinite;
-}
-
-@keyframes balloonWobble {
-  0% { transform: translateY(-10px) scale(1.15) rotate(2deg); }
-  100% { transform: translateY(-12px) scale(1.18) rotate(-2deg); }
-}
-
-@keyframes sparkleIntense {
-  0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
-  50% { opacity: 0.7; transform: scale(1.3) rotate(180deg); }
-}
-
-/* Balloon selection effects */
-.ball:active {
-  transform: scale(0.95);
-  transition: transform 0.1s ease;
-}
-
-@keyframes balloon-float {
-  0%, 100% { transform: translateY(0px) rotate(1deg); }
-  33% { transform: translateY(-6px) rotate(-1deg); }
-  66% { transform: translateY(-3px) rotate(0.5deg); }
-}
-
-.ball {
-  animation: balloon-float 4s ease-in-out infinite;
-}
-
-/* Staggered animation delays for natural movement */
-.ball:nth-child(1) { animation-delay: 0s; }
-.ball:nth-child(2) { animation-delay: 0.2s; }
-.ball:nth-child(3) { animation-delay: 0.4s; }
-.ball:nth-child(4) { animation-delay: 0.6s; }
-.ball:nth-child(5) { animation-delay: 0.8s; }
-.ball:nth-child(6) { animation-delay: 1s; }
-.ball:nth-child(7) { animation-delay: 1.2s; }
-.ball:nth-child(8) { animation-delay: 1.4s; }
-.ball:nth-child(9) { animation-delay: 1.6s; }
-.ball:nth-child(10) { animation-delay: 1.8s; }
-
-.ball.selected-left {
-  border: 4px solid #1976d2;
-  box-shadow: 0 0 24px #1976d2, 0 4px 16px #b2ebf2;
-  transform: scale(1.1);
-  animation: balloon-bounce 0.8s;
-}
-
-.ball.selected-right {
-  border: 4px solid #d32f2f;
-  box-shadow: 0 0 24px #d32f2f, 0 4px 16px #b2ebf2;
-  transform: scale(1.1);
-  animation: balloon-bounce 0.8s;
-}
-
-/* Balloon selected for guessing */
-.ball.guess-selected {
-  border: 4px solid #ff9800 !important;
-  box-shadow: 0 0 30px #ff9800, 0 4px 20px rgba(255, 152, 0, 0.4) !important;
-  transform: scale(1.15) !important;
-  animation: guess-pulse 1.5s infinite ease-in-out;
-}
-
-@keyframes guess-pulse {
-  0%, 100% { 
-    transform: scale(1.15); 
-    box-shadow: 0 0 30px #ff9800, 0 4px 20px rgba(255, 152, 0, 0.4);
-  }
-  50% { 
-    transform: scale(1.2); 
-    box-shadow: 0 0 40px #ff9800, 0 4px 25px rgba(255, 152, 0, 0.6);
-  }
-}
-
-/* Balloon string */
-.ball::after {
-  content: '';
-  display: block;
-  position: absolute;
-  left: 50%;
-  top: 98px;
-  width: 1px;
-  height: 25px;
-  background: linear-gradient(to bottom, #666 0%, #999 100%);
-  transform: translateX(-50%);
-  box-shadow: 1px 0 1px rgba(0,0,0,0.2);
-}
-
-/* Balloon highlight - makes it look shiny and 3D */
-.ball::before {
-  content: '';
-  position: absolute;
-  left: 20px;
-  top: 15px;
-  width: 25px;
-  height: 25px;
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.3) 40%, transparent 70%);
-  border-radius: 50%;
-  filter: blur(1px);
-}
-
-.ball.selected-left {
-  border: 4px solid #1976d2;
-  box-shadow: 0 0 16px #1976d2;
-  transform: scale(1.1);
-}
-
-.ball.selected-right {
-  border: 4px solid #d32f2f;
-  box-shadow: 0 0 16px #d32f2f;
-  transform: scale(1.1);
-}
-
-.controls button {
-  margin: 16px;
-  padding: 16px 32px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(90deg, #1976d2 0%, #64b5f6 100%);
-  color: #fff;
-  box-shadow: 0 2px 8px #b2ebf2;
-  cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
-}
-
-.controls button:hover {
-  background: linear-gradient(90deg, #64b5f6 0%, #1976d2 100%);
-  box-shadow: 0 4px 16px #1976d2;
-}
-
-#message {
-  font-weight: bold;
-  margin-top: 32px;
-  font-size: 1.5rem;
-  color: #d32f2f;
-  text-shadow: 0 2px 8px #fff;
-}
-
-#results-log {
-  margin: 32px auto;
-  width: 600px;
-  background: rgba(255,255,255,0.85);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 2px 16px #b2ebf2;
-}
-
-#results-log h2 {
-  font-size: 1.2rem;
-  margin-bottom: 12px;
-  color: #1976d2;
-}
-
-#log-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-#log-list li {
-  font-size: 1rem;
-  margin-bottom: 8px;
-  padding: 4px 0;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  align-items: center;
-}
-
-/* Particle Effects */
-.particle {
-  position: fixed;
-  pointer-events: none;
-  z-index: 1000;
-  font-size: 20px;
-  animation: particleFall 3s ease-out forwards;
-}
-
-@keyframes particleFall {
-  0% {
-    opacity: 1;
-    transform: translateY(0) rotate(0deg) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(200px) rotate(360deg) scale(0.5);
-  }
-}
-
-/* Confetti explosion */
-.confetti {
-  position: fixed;
-  pointer-events: none;
-  z-index: 1000;
-  width: 10px;
-  height: 10px;
-  animation: confettiFall 4s ease-out forwards;
-}
-
-@keyframes confettiFall {
-  0% {
-    opacity: 1;
-    transform: translateY(0) rotate(0deg);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(300px) rotate(720deg);
-  }
-}
-
-/* Victory celebration */
-.celebration {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 60px;
-  z-index: 1000;
-  animation: celebrationPop 2s ease-out forwards;
-  pointer-events: none;
-}
-
-/* ================================
-   FUTURISTIC CODE TERMINAL STYLES
-   ================================ */
-
-.code-terminal {
-  max-width: 900px;
-  margin: 30px auto;
-  background: #0d1117;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  border: 1px solid #30363d;
-  font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
-}
-
-.terminal-header {
-  background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #30363d;
-}
-
-.terminal-controls {
-  display: flex;
-  gap: 8px;
-}
-
-.control-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.control-dot.red { background: #ff5f56; }
-.control-dot.yellow { background: #ffbd2e; }
-.control-dot.green { background: #27ca3f; }
-
-.terminal-title {
-  color: #f0f6fc;
-  font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-}
-
-.terminal-stats {
-  color: #7d8590;
-  font-size: 12px;
-  font-family: monospace;
-}
-
-.terminal-body {
-  padding: 20px;
-  background: #0d1117;
-  min-height: 300px;
-}
-
-.terminal-prompt {
-  color: #58a6ff;
-  margin-bottom: 15px;
-  font-size: 14px;
-}
-
-.prompt-symbol {
-  color: #7ee787;
-  font-weight: bold;
-  margin-right: 8px;
-}
-
-.prompt-text {
-  color: #f0f6fc;
-}
-
-.code-progress {
-  margin: 20px 0;
-  padding: 15px;
-  background: rgba(33, 38, 45, 0.5);
-  border-radius: 8px;
-  border-left: 4px solid #58a6ff;
-}
-
-.progress-label {
-  margin-bottom: 10px;
-  font-size: 14px;
-}
-
-.keyword {
-  color: #ff7b72;
-  font-weight: bold;
-}
-
-.variable {
-  color: #79c0ff;
-}
-
-.progress-container {
-  background: #21262d;
-  height: 8px;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #7ee787 0%, #58a6ff 50%, #a5a5ff 100%);
-  transition: width 0.3s ease;
-  border-radius: 4px;
-}
-
-.output-section {
-  margin-top: 25px;
-}
-
-.output-header {
-  margin-bottom: 15px;
-}
-
-.comment {
-  color: #8b949e;
-  font-style: italic;
-}
-
-.code-output {
-  background: rgba(13, 17, 23, 0.7);
-  border-radius: 8px;
-  padding: 15px;
-  border: 1px solid #30363d;
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.code-output::-webkit-scrollbar {
-  width: 8px;
-}
-
-.code-output::-webkit-scrollbar-track {
-  background: #21262d;
-  border-radius: 4px;
-}
-
-.code-output::-webkit-scrollbar-thumb {
-  background: #58a6ff;
-  border-radius: 4px;
-}
-
-.log-item {
-  margin-bottom: 20px;
-  padding: 15px;
-  background: rgba(33, 38, 45, 0.3);
-  border-radius: 8px;
-  border-left: 4px solid #58a6ff;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.log-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(88, 166, 255, 0.1), transparent);
-  animation: scanLine 3s ease-in-out infinite;
-}
-
-@keyframes scanLine {
-  0% { left: -100%; }
-  50% { left: 100%; }
-  100% { left: 100%; }
-}
-
-.log-item:hover {
-  background: rgba(33, 38, 45, 0.6);
-  transform: translateX(5px);
-  border-left-color: #7ee787;
-}
-
-.weighing-number {
-  color: #a5a5ff;
-  font-weight: bold;
-  font-size: 16px;
-  margin-bottom: 8px;
-}
-
-.weighing-number::before {
-  content: 'EXEC_';
-  color: #ff7b72;
-  font-size: 12px;
-}
-
-.weighing-details {
-  line-height: 1.6;
-}
-
-.weighing-balloons {
-  display: block;
-  margin-bottom: 8px;
-}
-
-.left-balloons {
-  color: #79c0ff;
-}
-
-.left-balloons::before {
-  content: 'LEFT_SIDE: ';
-  color: #ff7b72;
-  font-weight: bold;
-}
-
-.vs {
-  color: #ffa657;
-  font-weight: bold;
-  margin: 0 15px;
-  position: relative;
-}
-
-.vs::before {
-  content: ' ⚔️ ';
-  font-size: 12px;
-}
-
-.right-balloons {
-  color: #ffab70;
-}
-
-.right-balloons::before {
-  content: 'RIGHT_SIDE: ';
-  color: #ff7b72;
-  font-weight: bold;
-}
-
-.weighing-result {
-  margin: 8px 0;
-  font-weight: bold;
-  font-size: 16px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  display: inline-block;
-}
-
-.weighing-result::before {
-  content: 'RESULT: ';
-  color: #ff7b72;
-  font-size: 12px;
-}
-
-.weighing-result.balanced {
-  background: rgba(125, 196, 248, 0.1);
-  color: #7dc4f8;
-  border: 1px solid rgba(125, 196, 248, 0.3);
-}
-
-.weighing-result.left-heavy {
-  background: rgba(126, 231, 135, 0.1);
-  color: #7ee787;
-  border: 1px solid rgba(126, 231, 135, 0.3);
-}
-
-.weighing-result.right-heavy {
-  background: rgba(255, 171, 112, 0.1);
-  color: #ffab70;
-  border: 1px solid rgba(255, 171, 112, 0.3);
-}
-
-.weighing-time {
-  color: #8b949e;
-  font-size: 12px;
-  margin-top: 5px;
-}
-
-.weighing-time::before {
-  content: 'TIMESTAMP: ';
-  color: #ff7b72;
-}
-
-/* Blinking cursor effect */
-.terminal-cursor {
-  animation: blink 1s infinite;
-}
-
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
-
-/* Data flow animation */
-.data-flow {
-  position: relative;
-  overflow: hidden;
-}
-
-.data-flow::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(88, 166, 255, 0.2), transparent);
-  animation: dataFlow 2s ease-in-out infinite;
-}
-
-@keyframes dataFlow {
-  0% { left: -100%; }
-  100% { left: 100%; }
-}
-
-@keyframes celebrationPop {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.5);
-  }
-  30% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.2);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1) translateY(-100px);
-  }
-}
-
-/* Screen shake effect */
-.shake {
-  animation: shake 0.5s ease-in-out;
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
-}
-
-/* Glow pulse effect */
-.glow-pulse {
-  animation: glowPulse 1s ease-in-out infinite alternate;
-}
-
-@keyframes glowPulse {
-  from { box-shadow: 0 0 20px rgba(255,215,0,0.5); }
-  to { box-shadow: 0 0 30px rgba(255,215,0,0.8), 0 0 40px rgba(255,215,0,0.3); }
-}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>🎈 Balance Game 2 - Next Level Challenge</title>
+    <meta name="description" content="Test your logic skills with the enhanced balloon balance puzzle game! Can you find the heavy balloon in the fewest moves?">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <!-- Add Google Fonts for better typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Add GSAP animation library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Add Three.js for 3D effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Add Particle effects library -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+</head>
+
+<body>
+    <!-- Background particle system -->
+    <div id="tsparticles"></div>
+    
+    <!-- Game Stats Panel -->
+    <div id="stats-panel">
+        <div class="stat-item">
+            <span class="stat-icon">⏱️</span>
+            <span class="stat-label">Time</span>
+            <span id="timer">00:00</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-icon">🎯</span>
+            <span class="stat-label">Moves</span>
+            <span id="move-counter">0</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-icon">🏆</span>
+            <span class="stat-label">Best</span>
+            <span id="best-score">--</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-icon">🔥</span>
+            <span class="stat-label">Streak</span>
+            <span id="streak">0</span>
+        </div>
+    </div>
+
+    <h1 style="font-size:3.2rem; color:#2c3e50; letter-spacing:2px; text-shadow:0 2px 4px rgba(0,0,0,0.2); font-weight:700; margin-top:32px; background: linear-gradient(45deg, #e74c3c, #f39c12); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🎈 BALANCE GAME 2 🎈</h1>
+    <p style="font-size:1.2rem; color:#2c3e50; font-weight:600; margin-bottom:28px; text-shadow:0 1px 2px rgba(0,0,0,0.1); letter-spacing:0.5px; opacity:0.9;">Enhanced edition with new features! Drag the balloons onto the scale and discover the secret heavy one!</p>
+
+    <!-- Difficulty Selection -->
+    <div id="difficulty-panel">
+        <h3>🎮 Choose Your Challenge</h3>
+        <button class="difficulty-btn active" data-difficulty="easy">
+            <span class="diff-emoji">🟢</span>
+            <span class="diff-name">Easy</span>
+            <span class="diff-desc">6 Balloons</span>
+        </button>
+        <button class="difficulty-btn" data-difficulty="medium">
+            <span class="diff-emoji">🟡</span>
+            <span class="diff-name">Medium</span>
+            <span class="diff-desc">10 Balloons</span>
+        </button>
+        <button class="difficulty-btn" data-difficulty="hard">
+            <span class="diff-emoji">🔴</span>
+            <span class="diff-name">Hard</span>
+            <span class="diff-desc">12 Balloons</span>
+        </button>
+        <button class="difficulty-btn" data-difficulty="expert">
+            <span class="diff-emoji">💀</span>
+            <span class="diff-name">Expert</span>
+            <span class="diff-desc">15 Balloons + 2 Heavy!</span>
+        </button>
+    </div>
+
+    <!-- Scale area with left/right drop zones and center line -->
+    <div id="scale-area">
+        <div id="scale-container">
+            <div id="left-drop" class="drop-zone">
+                <span class="drop-hint">Drop balloons here</span>
+            </div>
+            <div id="center-line"></div>
+            <div id="right-drop" class="drop-zone">
+                <span class="drop-hint">Drop balloons here</span>
+            </div>
+        </div>
+        <div id="scale" class="scale"></div>
+    </div>
+
+    <!-- Balloons container -->
+    <div id="balls-container" class="balls"></div>
+
+    <!-- Game Instructions -->
+    <div class="game-instructions">
+        <p>🎈 <strong>Drag balloons</strong> to scale sides - any amount on each side!</p>
+        <p>🎯 <strong>Click a balloon</strong> to select it for guessing</p>
+        <p>⚖️ <strong>No restrictions</strong> - compare any combinations you want!</p>
+    </div>
+
+    <!-- Enhanced Game controls -->
+    <div class="controls">
+        <button id="hintBtn" class="control-btn hint-btn">💡 Hint</button>
+        <button id="weighBtn" class="control-btn weigh-btn">⚖️ Weigh</button>
+        <button id="guessBtn" class="control-btn guess-btn">🎯 Guess</button>
+        <button id="undoBtn" class="control-btn undo-btn">↩️ Undo</button>
+        <button id="resetBtn" class="control-btn reset-btn">🔄 Reset</button>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settings-panel">
+        <button id="settings-toggle">⚙️</button>
+        <div id="settings-menu" class="hidden">
+            <h3>⚙️ Settings</h3>
+            <div class="setting-item">
+                <label>🔊 Sound Effects</label>
+                <input type="checkbox" id="sound-toggle" checked>
+            </div>
+            <div class="setting-item">
+                <label>🎵 Background Music</label>
+                <input type="checkbox" id="music-toggle">
+            </div>
+            <div class="setting-item">
+                <label>✨ Particle Effects</label>
+                <input type="checkbox" id="particles-toggle" checked>
+            </div>
+            <div class="setting-item">
+                <label>🌈 Theme Effects</label>
+                <input type="checkbox" id="theme-effects-toggle" checked>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message area with enhanced styling -->
+    <div id="message"></div>
+
+    <!-- Enhanced Code-Style Results Terminal -->
+    <div id="results-log" class="code-terminal">
+        <div class="terminal-header">
+            <div class="terminal-controls">
+                <span class="control-dot red"></span>
+                <span class="control-dot yellow"></span>
+                <span class="control-dot green"></span>
+            </div>
+            <div class="terminal-title">⚖️ ANALYSIS_TERMINAL_V2.exe</div>
+            <div class="terminal-stats">
+                <span class="terminal-time" id="terminal-time">00:00</span>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div class="terminal-prompt">
+                <span class="prompt-symbol">$</span>
+                <span class="prompt-text">weighing_analyzer --mode=enhanced --session=v2</span>
+            </div>
+            <div id="progress-bar" class="code-progress">
+                <div class="progress-label">
+                    <span class="keyword">PROGRESS:</span> 
+                    <span class="variable" id="progress-text">0/3 optimal moves</span>
+                </div>
+                <div class="progress-container">
+                    <div id="progress-fill" class="progress-bar-fill"></div>
+                </div>
+            </div>
+            <div class="output-section">
+                <div class="output-header">
+                    <span class="comment">// Weighing analysis results - Enhanced Edition</span>
+                </div>
+                <div id="log-list" class="code-output"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievement System -->
+    <div id="achievements-panel" class="hidden">
+        <h3>🏆 Achievements</h3>
+        <div id="achievements-list"></div>
+    </div>
+
+    <!-- Victory Modal -->
+    <div id="victory-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>🎉 Congratulations! 🎉</h2>
+            <div id="victory-stats"></div>
+            <div class="modal-buttons">
+                <button id="share-btn" class="modal-btn">📱 Share Score</button>
+                <button id="next-level-btn" class="modal-btn">➡️ Next Level</button>
+                <button id="play-again-btn" class="modal-btn">🔄 Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="loading-balloon">🎈</div>
+            <h2>Loading Balance Game 2...</h2>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
