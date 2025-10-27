@@ -108,8 +108,9 @@
             <div class="right-panel">
                 <!-- Game Instructions -->
                 <div class="game-instructions">
-                    <p>🎈 Drag balloons to the scale - any amount on each side!</p>
-                    <p>🎯 Tap a balloon to select it for guessing</p>
+                    <p>🎈 Click a balloon, then click a drop zone to place it!</p>
+                    <p>🔄 Click balloons on the scale to move them back</p>
+                    <p>🎯 Double-click a balloon to select for guessing, then click Guess</p>
                 </div>
 
                 <!-- Scale Area -->
@@ -221,6 +222,38 @@
     <!-- Particle Canvas -->
     <canvas id="particles-canvas"></canvas>
 
+    <script>
+        // GitHub Pages debugging
+        console.log('GitHub Pages Debug Info:');
+        console.log('Location:', window.location.href);
+        console.log('Protocol:', window.location.protocol);
+        console.log('LocalStorage available:', typeof localStorage !== 'undefined');
+        console.log('DOM ready state:', document.readyState);
+        
+        // Fallback error handling
+        window.addEventListener('error', function(e) {
+            console.error('Page Error:', e.error, e.filename, e.lineno);
+        });
+        
+        // Ensure CSS is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, checking CSS...');
+            const body = document.body;
+            const computedStyle = window.getComputedStyle(body);
+            console.log('Body background:', computedStyle.background);
+            
+            // Test if CSS loaded by checking if body has the gradient background
+            if (!computedStyle.background.includes('gradient') && !computedStyle.background.includes('linear')) {
+                console.warn('CSS may not have loaded properly!');
+                // Try to reload CSS
+                const cssLink = document.querySelector('link[href="style.css"]');
+                if (cssLink) {
+                    const newLink = cssLink.cloneNode(true);
+                    cssLink.parentNode.replaceChild(newLink, cssLink);
+                }
+            }
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 
