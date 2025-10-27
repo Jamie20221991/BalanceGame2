@@ -577,6 +577,38 @@ body.dark-theme {
   box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
 }
 
+/* Click-to-drop highlight */
+.drop-zone.click-highlight {
+  border-color: #00ff88;
+  background: rgba(0, 255, 136, 0.15);
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
+  animation: dropZonePulse 1.5s infinite ease-in-out;
+  cursor: pointer !important;
+}
+
+.drop-zone.click-highlight .drop-hint {
+  color: #00ff88;
+  font-weight: 700;
+  animation: hintPulse 1s infinite ease-in-out;
+}
+
+@keyframes dropZonePulse {
+  0%, 100% { 
+    box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
+    border-color: #00ff88;
+  }
+  50% { 
+    box-shadow: 0 0 35px rgba(0, 255, 136, 0.6);
+    border-color: #00ffaa;
+  }
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
 .drop-hint {
   font-size: 14px;
   opacity: 0.7;
@@ -696,6 +728,26 @@ body.dark-theme {
   border-color: #ffd700;
   box-shadow: 0 0 25px #ffd700, 0 15px 35px rgba(0, 0, 0, 0.3);
   animation: selectedPulse 1.5s infinite ease-in-out;
+}
+
+/* Click-to-select balloon state */
+.balloon.click-selected {
+  transform: translateY(-8px) scale(1.2);
+  border-color: #00ff88;
+  box-shadow: 0 0 30px #00ff88, 0 15px 35px rgba(0, 0, 0, 0.3);
+  animation: clickSelectedPulse 1s infinite ease-in-out;
+  cursor: pointer;
+}
+
+@keyframes clickSelectedPulse {
+  0%, 100% { 
+    box-shadow: 0 0 30px #00ff88, 0 15px 35px rgba(0, 0, 0, 0.3);
+    transform: translateY(-8px) scale(1.2);
+  }
+  50% { 
+    box-shadow: 0 0 40px #00ff88, 0 15px 35px rgba(0, 0, 0, 0.3);
+    transform: translateY(-10px) scale(1.25);
+  }
 }
 
 @keyframes selectedPulse {
