@@ -17,6 +17,7 @@ class MobileBalanceGame {
     this.selectedBalloons = { left: [], right: [] };
     this.ballWeights = {};
     this.draggedBalloon = null;
+    this.clickSelectedBalloon = null; // For click-to-drop functionality
     
     this.difficultySettings = {
       easy: { count: 6, oddWeight: 3, normalWeight: 5, reward: 100, showDirection: true },
@@ -90,15 +91,13 @@ class MobileBalanceGame {
   }
   
   setupDropZones() {
+    // Drop zones now use click system - no drag event listeners needed
     const leftZone = document.getElementById('left-drop-zone');
     const rightZone = document.getElementById('right-drop-zone');
     
     if (leftZone && rightZone) {
-      [leftZone, rightZone].forEach(zone => {
-        zone.addEventListener('dragover', this.handleDragOver.bind(this));
-        zone.addEventListener('drop', this.handleDrop.bind(this));
-        zone.addEventListener('dragleave', this.handleDragLeave.bind(this));
-      });
+      // Initialize drop zone hints
+      this.updateDropZoneHints();
     }
   }
   
@@ -344,7 +343,7 @@ class MobileBalanceGame {
       balloon.className = 'balloon';
       balloon.id = balloonId;
       balloon.textContent = index + 1;
-      balloon.draggable = true;
+      balloon.draggable = false; // Disabled drag and drop - using click system now
       
       // Set random balloon color
       const colors = [
@@ -357,127 +356,16 @@ class MobileBalanceGame {
       ];
       balloon.style.background = colors[index % colors.length];
       
-      // Drag events
-      balloon.addEventListener('dragstart', this.handleDragStart.bind(this));
-      balloon.addEventListener('dragend', this.handleDragEnd.bind(this));
+      // Click to select for quick drop (replaces drag and drop)
+      balloon.addEventListener('click', this.handleBalloonClickSelect.bind(this));
       
-      // Touch events for mobile
-      balloon.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
-      balloon.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
-      balloon.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: false });
-      
-      // Click to select/deselect
-      balloon.addEventListener('click', this.handleBalloonClick.bind(this));
+      // Double-click to select for guessing (alternative to Shift+Click)
+      balloon.addEventListener('dblclick', this.handleBalloonDoubleClick.bind(this));
       
       container.appendChild(balloon);
     });
-  }
-  
-  handleBalloonClick(e) {
-    const balloon = e.currentTarget;
-    balloon.classList.toggle('selected');
-    this.vibrate([25]);
-  }
-  
-  handleDragStart(e) {
-    this.draggedBalloon = e.target;
-    e.target.classList.add('dragging');
-    this.vibrate([50]);
-  }
-  
-  handleDragEnd(e) {
-    e.target.classList.remove('dragging');
-    this.draggedBalloon = null;
-  }
-  
-  handleDragOver(e) {
-    e.preventDefault();
-    e.currentTarget.classList.add('drag-over');
-  }
-  
-  handleDragLeave(e) {
-    e.currentTarget.classList.remove('drag-over');
-  }
-  
-  handleDrop(e) {
-    e.preventDefault();
-    e.currentTarget.classList.remove('drag-over');
     
-    if (!this.draggedBalloon) return;
-    
-    const dropZone = e.currentTarget;
-    const side = dropZone.id.includes('left') ? 'left' : 'right';
-    
-    // Move balloon to drop zone
-    this.moveBalloonToSide(this.draggedBalloon, side);
-    this.vibrate([75]);
-    this.sounds.place();
-  }
-  
-  // Touch handling for mobile devices
-  handleTouchStart(e) {
-    e.preventDefault();
-    this.draggedBalloon = e.currentTarget;
-    e.currentTarget.classList.add('dragging');
-    this.vibrate([50]);
-  }
-  
-  handleTouchMove(e) {
-    e.preventDefault();
-    if (!this.draggedBalloon) return;
-    
-    const touch = e.touches[0];
-    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-    
-    // Remove existing drag-over classes
-    document.querySelectorAll('.drop-zone').forEach(zone => zone.classList.remove('drag-over'));
-    
-    // Add drag-over to current drop zone if over one
-    if (elementBelow && elementBelow.classList.contains('drop-zone')) {
-      elementBelow.classList.add('drag-over');
-    }
-  }
-  
-  handleTouchEnd(e) {
-    e.preventDefault();
-    if (!this.draggedBalloon) return;
-    
-    const touch = e.changedTouches[0];
-    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-    
-    // Clean up
-    document.querySelectorAll('.drop-zone').forEach(zone => zone.classList.remove('drag-over'));
-    this.draggedBalloon.classList.remove('dragging');
-    
-    // Handle drop
-    if (elementBelow && elementBelow.classList.contains('drop-zone')) {
-      const side = elementBelow.id.includes('left') ? 'left' : 'right';
-      this.moveBalloonToSide(this.draggedBalloon, side);
-      this.vibrate([75]);
-      this.sounds.place();
-    }
-    
-    this.draggedBalloon = null;
-  }
-  
-  moveBalloonToSide(balloon, side) {
-    const balloonId = balloon.id;
-    
-    // Remove from current position
-    Object.keys(this.selectedBalloons).forEach(key => {
-      this.selectedBalloons[key] = this.selectedBalloons[key].filter(id => id !== balloonId);
-    });
-    
-    // Add to new side
-    this.selectedBalloons[side].push(balloonId);
-    
-    // Move balloon element to drop zone
-    const dropZone = document.getElementById(side === 'left' ? 'left-drop-zone' : 'right-drop-zone');
-    if (dropZone) {
-      balloon.classList.remove('selected');
-      dropZone.appendChild(balloon);
-    }
-    
+    // Update drop zone hints for click functionality
     this.updateDropZoneHints();
   }
   
@@ -488,8 +376,24 @@ class MobileBalanceGame {
     const leftHint = leftZone?.querySelector('.drop-hint');
     const rightHint = rightZone?.querySelector('.drop-hint');
     
-    if (leftHint) leftHint.style.display = this.selectedBalloons.left.length > 0 ? 'none' : 'block';
-    if (rightHint) rightHint.style.display = this.selectedBalloons.right.length > 0 ? 'none' : 'block';
+    // Update hint text based on whether balloons are present
+    if (leftHint) {
+      if (this.selectedBalloons.left.length > 0) {
+        leftHint.style.display = 'none';
+      } else {
+        leftHint.textContent = this.clickSelectedBalloon ? 'Click here!' : 'Drop here';
+        leftHint.style.display = 'block';
+      }
+    }
+    
+    if (rightHint) {
+      if (this.selectedBalloons.right.length > 0) {
+        rightHint.style.display = 'none';
+      } else {
+        rightHint.textContent = this.clickSelectedBalloon ? 'Click here!' : 'Drop here';
+        rightHint.style.display = 'block';
+      }
+    }
   }
   
   weighBalloons() {
@@ -696,6 +600,193 @@ class MobileBalanceGame {
     this.makeGuess(guessedBalloon);
   }
   
+  // NEW: Click-to-select balloon functionality
+  handleBalloonClickSelect(e) {
+    e.preventDefault();
+    const balloon = e.target;
+    const balloonId = balloon.id;
+    
+    // Check if balloon is in a drop zone (should be moved back to container)
+    const parent = balloon.parentElement;
+    if (parent && parent.classList.contains('drop-zone')) {
+      this.removeBalloonFromScale(balloonId);
+      return;
+    }
+    
+    // If Ctrl/Cmd key is held, this is for guessing selection
+    if (e.ctrlKey || e.metaKey || e.shiftKey) {
+      balloon.classList.toggle('selected');
+      this.vibrate([25]);
+      
+      // Update message based on selection
+      const selectedCount = document.querySelectorAll('.balloon.selected').length;
+      if (selectedCount === 1) {
+        this.showMessage('🎯 Balloon selected for guessing! Click Guess button.', 'success');
+      } else if (selectedCount > 1) {
+        this.showMessage('⚠️ Please select only ONE balloon for guessing.', 'warning');
+      } else {
+        this.showMessage('Select balloons and use the scale to find the odd one!', 'info');
+      }
+      return;
+    }
+    
+    // If already selected for click-drop, deselect
+    if (this.clickSelectedBalloon === balloonId) {
+      this.clearBalloonSelection();
+      return;
+    }
+    
+    // Clear any previous selection
+    this.clearBalloonSelection();
+    
+    // Select this balloon
+    this.clickSelectedBalloon = balloonId;
+    balloon.classList.add('click-selected');
+    
+    // Highlight drop zones
+    this.highlightDropZones(true);
+    
+    // Show message
+    this.showMessage('🎯 Balloon selected! Click a drop zone to place it, or Shift+Click to select for guessing.', 'info');
+    
+    // Add click listeners to drop zones
+    this.addDropZoneClickListeners();
+  }
+  
+  // NEW: Remove balloon from scale and return to container
+  removeBalloonFromScale(balloonId) {
+    const balloon = document.getElementById(balloonId);
+    const container = document.getElementById('balloons-container');
+    
+    if (!balloon || !container) return;
+    
+    // Remove from selectedBalloons arrays
+    this.selectedBalloons.left = this.selectedBalloons.left.filter(id => id !== balloonId);
+    this.selectedBalloons.right = this.selectedBalloons.right.filter(id => id !== balloonId);
+    
+    // Move balloon back to container
+    container.appendChild(balloon);
+    
+    // Clear any selection classes
+    balloon.classList.remove('click-selected');
+    
+    // Update display
+    this.updateDropZoneHints();
+    this.showMessage('🔄 Balloon moved back to selection area.', 'info');
+    
+    // Vibration feedback
+    this.vibrate([50]);
+  }
+  
+  // NEW: Clear balloon selection
+  clearBalloonSelection() {
+    if (this.clickSelectedBalloon) {
+      const balloon = document.getElementById(this.clickSelectedBalloon);
+      if (balloon) {
+        balloon.classList.remove('click-selected');
+      }
+    }
+    this.clickSelectedBalloon = null;
+    this.highlightDropZones(false);
+    this.removeDropZoneClickListeners();
+    this.showMessage('Select balloons and use the scale to find the odd one!', 'info');
+  }
+  
+  // NEW: Highlight drop zones
+  highlightDropZones(highlight) {
+    const leftZone = document.getElementById('left-drop-zone');
+    const rightZone = document.getElementById('right-drop-zone');
+    
+    if (highlight) {
+      leftZone?.classList.add('click-highlight');
+      rightZone?.classList.add('click-highlight');
+    } else {
+      leftZone?.classList.remove('click-highlight');
+      rightZone?.classList.remove('click-highlight');
+    }
+  }
+  
+  // NEW: Add click listeners to drop zones
+  addDropZoneClickListeners() {
+    const leftZone = document.getElementById('left-drop-zone');
+    const rightZone = document.getElementById('right-drop-zone');
+    
+    if (leftZone) {
+      leftZone.addEventListener('click', this.handleDropZoneClick.bind(this));
+      leftZone.style.cursor = 'pointer';
+    }
+    if (rightZone) {
+      rightZone.addEventListener('click', this.handleDropZoneClick.bind(this));
+      rightZone.style.cursor = 'pointer';
+    }
+  }
+  
+  // NEW: Remove click listeners from drop zones
+  removeDropZoneClickListeners() {
+    const leftZone = document.getElementById('left-drop-zone');
+    const rightZone = document.getElementById('right-drop-zone');
+    
+    if (leftZone) {
+      leftZone.removeEventListener('click', this.handleDropZoneClick.bind(this));
+      leftZone.style.cursor = 'default';
+    }
+    if (rightZone) {
+      rightZone.removeEventListener('click', this.handleDropZoneClick.bind(this));
+      rightZone.style.cursor = 'default';
+    }
+  }
+  
+  // NEW: Handle drop zone click
+  handleDropZoneClick(e) {
+    if (!this.clickSelectedBalloon) return;
+    
+    const dropZone = e.target.closest('.drop-zone');
+    if (!dropZone) return;
+    
+    const balloon = document.getElementById(this.clickSelectedBalloon);
+    if (!balloon) return;
+    
+    // Determine which side
+    const isLeftSide = dropZone.id === 'left-drop-zone';
+    const side = isLeftSide ? 'left' : 'right';
+    
+    // Move balloon to drop zone
+    dropZone.appendChild(balloon);
+    balloon.classList.remove('click-selected');
+    
+    // Update selected balloons
+    this.selectedBalloons[side].push(this.clickSelectedBalloon);
+    
+    // Clear selection
+    this.clickSelectedBalloon = null;
+    this.highlightDropZones(false);
+    this.removeDropZoneClickListeners();
+    
+    // Update hints and show success message
+    this.updateDropZoneHints();
+    this.showMessage(`✅ Balloon placed on ${side} side!`, 'success');
+    
+    // Vibration feedback
+    this.vibrate([30]);
+  }
+  
+  // NEW: Double-click handler for guessing selection
+  handleBalloonDoubleClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const balloon = e.target;
+    
+    // Clear any existing selections for guessing
+    document.querySelectorAll('.balloon.selected').forEach(b => b.classList.remove('selected'));
+    
+    // Select this balloon for guessing
+    balloon.classList.add('selected');
+    this.vibrate([50, 50, 50]);
+    
+    this.showMessage('🎯 Balloon selected for guessing! Click Guess button.', 'success');
+  }
+  
   makeGuess(balloonId) {
     const settings = this.difficultySettings[this.currentDifficulty];
     const balloonWeight = this.ballWeights[balloonId];
@@ -855,26 +946,44 @@ class MobileBalanceGame {
       isVibrationEnabled: this.isVibrationEnabled,
       isSoundEnabled: this.isSoundEnabled
     };
-    localStorage.setItem('balance-game-settings', JSON.stringify(settings));
+    
+    // Safe localStorage saving
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('balance-game-settings', JSON.stringify(settings));
+      }
+    } catch (error) {
+      console.warn('Could not save settings to localStorage:', error);
+    }
   }
   
   loadSettings() {
-    const saved = localStorage.getItem('balance-game-settings');
-    if (saved) {
-      const settings = JSON.parse(saved);
-      this.isDarkTheme = settings.isDarkTheme || false;
-      this.isVibrationEnabled = settings.isVibrationEnabled !== false;
-      this.isSoundEnabled = settings.isSoundEnabled !== false;
-      
-      // Apply settings to UI
-      document.body.classList.toggle('dark-theme', this.isDarkTheme);
-      const darkToggle = document.getElementById('dark-theme-toggle');
-      const vibrationToggle = document.getElementById('vibration-toggle');
-      const soundToggle = document.getElementById('sound-toggle');
-      
-      if (darkToggle) darkToggle.checked = this.isDarkTheme;
-      if (vibrationToggle) vibrationToggle.checked = this.isVibrationEnabled;
-      if (soundToggle) soundToggle.checked = this.isSoundEnabled;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const saved = localStorage.getItem('balance-game-settings');
+        if (saved) {
+          const settings = JSON.parse(saved);
+          this.isDarkTheme = settings.isDarkTheme || false;
+          this.isVibrationEnabled = settings.isVibrationEnabled !== false;
+          this.isSoundEnabled = settings.isSoundEnabled !== false;
+          
+          // Apply settings to UI
+          document.body.classList.toggle('dark-theme', this.isDarkTheme);
+          const darkToggle = document.getElementById('dark-theme-toggle');
+          const vibrationToggle = document.getElementById('vibration-toggle');
+          const soundToggle = document.getElementById('sound-toggle');
+          
+          if (darkToggle) darkToggle.checked = this.isDarkTheme;
+          if (vibrationToggle) vibrationToggle.checked = this.isVibrationEnabled;
+          if (soundToggle) soundToggle.checked = this.isSoundEnabled;
+        }
+      }
+    } catch (error) {
+      console.warn('Could not load settings from localStorage:', error);
+      // Use default settings
+      this.isDarkTheme = false;
+      this.isVibrationEnabled = true;
+      this.isSoundEnabled = true;
     }
   }
   
@@ -971,9 +1080,25 @@ class MobileBalanceGame {
   }
 }
 
-// Initialize the game when DOM is loaded
+// Initialize the game when DOM is loaded - SINGLE INITIALIZATION POINT
 document.addEventListener('DOMContentLoaded', () => {
-  window.game = new MobileBalanceGame();
+  console.log('DOM loaded, starting game initialization...');
+  
+  // Safely initialize the game with error handling
+  try {
+    window.game = new MobileBalanceGame();
+    console.log('Game initialized successfully');
+  } catch (error) {
+    console.error('Game initialization failed:', error);
+    // Fallback initialization
+    setTimeout(() => {
+      try {
+        window.game = new MobileBalanceGame();
+      } catch (retryError) {
+        console.error('Retry failed:', retryError);
+      }
+    }, 100);
+  }
 });
 
 // Handle visibility change for mobile performance
@@ -985,107 +1110,57 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-// Background color changing effect
-function getRandomColor() {
-    let colors = ['#ffebee', '#e8f5e8', '#e3f2fd', '#fff3e0', '#fce4ec', '#f3e5f5', '#e0f2f1'];
-    let randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex];
+// Enhanced Game state with localStorage safety
+let gameState = {};
+
+// Initialize game state safely
+function initializeGameState() {
+  try {
+    gameState = {
+      heavyIndex: Math.floor(Math.random() * 6),
+      leftSelection: [],
+      rightSelection: [],
+      weighings: [],
+      difficulty: 'easy',
+      theme: 'classic',
+      balloonCount: 6,
+      heavyCount: 1,
+      gameStartTime: null,
+      moveCount: 0,
+      bestScore: (typeof localStorage !== 'undefined' ? localStorage.getItem('bestScore') : null) || '--',
+      streak: parseInt((typeof localStorage !== 'undefined' ? localStorage.getItem('streak') : null) || '0') || 0,
+      soundEnabled: true,
+      particlesEnabled: false,
+      gameHistory: []
+    };
+  } catch (error) {
+    console.warn('localStorage not available, using default state');
+    gameState = {
+      heavyIndex: Math.floor(Math.random() * 6),
+      leftSelection: [],
+      rightSelection: [],
+      weighings: [],
+      difficulty: 'easy',
+      theme: 'classic',
+      balloonCount: 6,
+      heavyCount: 1,
+      gameStartTime: null,
+      moveCount: 0,
+      bestScore: '--',
+      streak: 0,
+      soundEnabled: true,
+      particlesEnabled: false,
+      gameHistory: []
+    };
+  }
 }
 
-// Enhanced Game state with all features
-let gameState = {
-    heavyIndex: Math.floor(Math.random() * 6),
-    leftSelection: [],
-    rightSelection: [],
-    weighings: [],
-    difficulty: 'easy',
-    theme: 'classic',
-    balloonCount: 6,
-    heavyCount: 1,
-    gameStartTime: null,
-    moveCount: 0,
-    bestScore: localStorage.getItem('bestScore') || '--',
-    streak: parseInt(localStorage.getItem('streak')) || 0,
-    soundEnabled: true,
-    particlesEnabled: false,
-    gameHistory: []
-};
+// Initialize game state
+initializeGameState();
 
 // Game timer
 let gameTimer = null;
 let gameTime = 0;
-
-// Initialize everything when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, starting game initialization...');
-    
-    // Add a visible status indicator
-    const statusDiv = document.createElement('div');
-    statusDiv.id = 'debug-status';
-    statusDiv.style.position = 'fixed';
-    statusDiv.style.top = '10px';
-    statusDiv.style.right = '10px';
-    statusDiv.style.background = 'rgba(0,0,0,0.8)';
-    statusDiv.style.color = 'white';
-    statusDiv.style.padding = '10px';
-    statusDiv.style.borderRadius = '5px';
-    statusDiv.style.zIndex = '10000';
-    statusDiv.style.fontSize = '12px';
-    statusDiv.innerHTML = 'Step 1: DOM loaded ✅<br>';
-    document.body.appendChild(statusDiv);
-    
-    // Show loading screen first
-    showLoadingScreen();
-    statusDiv.innerHTML += 'Step 2: Loading screen shown ✅<br>';
-    
-    // Initialize core systems
-    console.log('Initializing sounds...');
-    initializeMinimalSounds();
-    statusDiv.innerHTML += 'Step 3: Sounds initialized ✅<br>';
-    
-    console.log('Initializing particles...');
-    initializeParticles();
-    statusDiv.innerHTML += 'Step 4: Particles disabled for performance ✅<br>';
-    
-    // Wait a bit for DOM to be fully ready
-    setTimeout(() => {
-        console.log('Setting up event listeners...');
-        setupEventListeners();
-        statusDiv.innerHTML += 'Step 5: Event listeners set ✅<br>';
-        
-        console.log('Initializing game...');
-        initializeGame();
-        statusDiv.innerHTML += 'Step 6: Game initialized ✅<br>';
-        
-        // Show welcome message
-        setTimeout(() => {
-            const messageEl = document.getElementById('message');
-            if (messageEl) {
-                showMessage("🎈 Welcome! Choose a difficulty to start playing!", 'info');
-                console.log('Welcome message shown');
-                statusDiv.innerHTML += 'Step 7: Welcome message shown ✅<br>';
-            }
-            
-            // Double-check difficulty system setup
-            console.log('Ensuring difficulty system is ready...');
-            setupDifficultySystem();
-            statusDiv.innerHTML += 'Step 8: Difficulty system ready ✅<br>';
-            
-            // Initialize drop zone display
-            updateDropZoneDisplay();
-            statusDiv.innerHTML += 'Step 9: Drop zones initialized ✅<br>';
-            console.log('Game initialization complete!');
-            statusDiv.innerHTML += 'Step 9: ALL COMPLETE! 🎉<br>';
-            
-            // Remove status div after 5 seconds
-            setTimeout(() => {
-                if (statusDiv.parentNode) {
-                    statusDiv.parentNode.removeChild(statusDiv);
-                }
-            }, 5000);
-        }, 200);
-    }, 100);
-});
 
 function showLoadingScreen() {
     const loadingScreen = document.getElementById('loading-screen');
